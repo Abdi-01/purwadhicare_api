@@ -1,0 +1,113 @@
+const db = require("../database");
+const { createToken } = require("../helpers/createToken");
+const cryptojs = require("crypto-js");
+const transporter = require("../helpers/nodemailer");
+const TOKEN_KEY = process.env.TOKEN_KEY;
+
+module.exports = {
+  // Controller untuk Proses Register
+  userRegister: (req, res) => {
+    console.log(req.body);
+    let { username, email, password } = req.body;
+    const hashpass = cryptojs.HmacMD5(password, TOKEN_KEY).toString();
+    let insertQuery = `Insert INTO user (username, email, password) values ('${username}','${email}','${hashpass}');`;
+    // console.log(insertQuery);
+    // console.log(password);
+    db.query(insertQuery, (err, results) => {
+      if (err) {
+        console.log(err);
+        res.status(500).send(err);
+      }
+      console.log(results.insertId);
+      if (results.insertId) {
+        let sqlGet = `Select * from user where iduser = ${results.insertId};`;
+        db.query(sqlGet, (err2, results2) => {
+          if (err2) {
+            console.log(err2);
+            res.status(500).send(err2);
+          }
+          // Bahan data untuk membuat token
+          let { iduser, username, email } = results2[0];
+          // Membuat token
+          let token = createToken({ iduser, username, email });
+          // Isi Email yang akan dikirimkan
+          let mail = {
+            from: `Admin <purwadhicare@gmail.com>`,
+            to: `${email}`,
+            subject: "Purwadhicare User Account Verification",
+            html: `<img src="https://i.ibb.co/8dp71H3/logo.png" />
+            <hr />
+            <h3>Hello, ${username}</h3>
+            <h3>Thank you for registering your account with Purwadhicare! 😃</h3>
+            <h5>
+              To finish setting up your account and buy our products, click the link below for your account verification.
+            </h5>
+            <h5>
+              <a href="http://localhost:3000/authentication/${token}"
+                >Verify Your Account Here</a
+              >
+            </h5>
+            <br>
+            <br>
+            <p>Regards, Admin Purwadhicare</p>`,
+          };
+
+          transporter.sendMail(mail, (errMail, resMail) => {
+            if (errMail) {
+              console.log(errMail);
+              res.status(500).send({
+                message: "Registration Failed!",
+                success: false,
+                err: errMail,
+              });
+            }
+            res.status(200).send({
+              message: "Registration Success, Check Your Email!",
+              success: true,
+            });
+          });
+        });
+      }
+    });
+  },
+  // Controller untuk Proses Verifikasi
+  verification: (req, res) => {
+    console.log(req.user);
+    let updateQuery = `Update user set is_active='true' where iduser = ${req.user.iduser};`;
+
+    db.query(updateQuery, (err, results) => {
+      if (err) {
+        console.log(err);
+        res.status(500).send(err);
+      }
+      res.status(200).send({ message: "Verified Account", success: true });
+    });
+  },
+  // Controller untuk Proses Login
+  login: (req, res) => {
+    let { email, password } = req.body;
+    const hashpass = cryptojs.HmacMD5(password, TOKEN_KEY).toString();
+    let scriptQuery = `Select * from user where email='${email}' and password='${hashpass}';`;
+    // console.log(req.body, scriptQuery);
+    db.query(scriptQuery, (err, results) => {
+      if (err) res.status(500).send(err);
+      if (results[0]) {
+        let { iduser, username, email, password, is_active } = results[0];
+        let token = createToken({
+          iduser,
+          username,
+          email,
+          password,
+          is_active,
+        });
+        if (is_active != "true") {
+          res.status(200).send({ message: "Your account is not verified" });
+        } else {
+          res
+            .status(200)
+            .send({ dataLogin: results[0], token, message: "Login Success" });
+        }
+      }
+    });
+  },
+};
