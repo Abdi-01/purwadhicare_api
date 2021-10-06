@@ -11,6 +11,7 @@ const db = require("./database");
 app.use(cors());
 app.use(express.json());
 app.use(bearerToken());
+app.use(express.static("public"));
 
 db.connect((err) => {
   if (err) return console.log(err);
@@ -18,8 +19,12 @@ db.connect((err) => {
   console.log(`Connected with my SQL`);
 });
 
-const { userRouter } = require("./routers");
 
-app.use("/user", userRouter);
+app.get("/", (req, res) => {
+  res.status(200).send("<h4>Welcome to your-api</h4>");
+});
+
+const { userRouters } = require("./routers");
+app.use("/user", userRouters);
 
 app.listen(PORT, () => console.log("Api Running :", PORT));

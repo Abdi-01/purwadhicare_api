@@ -18,4 +18,7 @@ router.post(
   userController.login
 );
 router.patch("/verified", auth, userController.verification);
+router.get("/profile/:id", userControllers.getUser);
+router.patch("/picture/:id", userControllers.uploadPictureProfile);
+
 module.exports = router;
