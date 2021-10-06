@@ -13,11 +13,12 @@ app.use(express.json());
 app.use(bearerToken());
 app.use(express.static("public"));
 
-db.connect((err) => {
-  if (err) return console.log(err);
-
-  console.log(`Connected with my SQL`);
-});
+// db.getConnection((err, connection) => {
+//   if (err) {
+//     return console.log("error mysql", err.message);
+//   }
+//   console.log(`Connected to mysql server`, connection.threadId);
+// });
 
 
 app.get("/", (req, res) => {
