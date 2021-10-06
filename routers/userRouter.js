@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const { userController } = require("../controllers");
+const { userControllers } = require("../controllers");
 const { body } = require("express-validator");
 const { auth } = require("../helpers/authToken");
 const { checkLogin, checkRegister } = require("../validator/user");
@@ -9,15 +9,15 @@ router.put(
   "/register",
   checkRegister(),
   handleValidationError,
-  userController.userRegister
+  userControllers.userRegister
 );
 router.post(
   "/login",
   checkLogin(),
   handleValidationError,
-  userController.login
+  userControllers.login
 );
-router.patch("/verified", auth, userController.verification);
+router.patch("/verified", auth, userControllers.verification);
 router.get("/profile/:id", userControllers.getUser);
 router.patch("/picture/:id", userControllers.uploadPictureProfile);
 
