@@ -2,7 +2,12 @@ const router = require("express").Router();
 const { userControllers } = require("../controllers");
 const { body } = require("express-validator");
 const { auth } = require("../helpers/authToken");
-const { checkLogin, checkRegister } = require("../validator/user");
+const {
+  checkLogin,
+  checkRegister,
+  checkForgetPassword,
+  checkNewPassword,
+} = require("../validator/user");
 const { handleValidationError } = require("../middlewraes/handleError");
 
 router.put(
@@ -18,6 +23,16 @@ router.post(
   userControllers.login
 );
 router.patch("/verified", auth, userControllers.verification);
+router.post(
+  "/forgetPassword",
+  checkForgetPassword(),
+  userControllers.forgetPassword
+);
+router.post(
+  "/resetPassword",
+  checkNewPassword(),
+  userControllers.resetPassword
+);
 router.get("/profile/:id", userControllers.getUser);
 router.patch("/picture/:id", userControllers.uploadPictureProfile);
 

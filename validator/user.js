@@ -28,4 +28,30 @@ function checkLogin() {
     body("password").isLength({ min: 1 }).withMessage("Password is Empty"),
   ];
 }
-module.exports = { checkRegister, checkLogin };
+function checkNewPassword() {
+  return [
+    body("password")
+      .isStrongPassword({
+        minLength: 5,
+        minUppercase: 1,
+        minNumbers: 1,
+        minSymbols: 1,
+      })
+      .withMessage(
+        "Password must contain upper case, number, symbol, and with minimum 5 length"
+      ),
+  ];
+}
+
+function checkForgetPassword() {
+  return [
+    body("email").isEmail().isLength({ min: 1 }).withMessage("Email is Empty"),
+  ];
+}
+
+module.exports = {
+  checkRegister,
+  checkLogin,
+  checkNewPassword,
+  checkForgetPassword,
+};
