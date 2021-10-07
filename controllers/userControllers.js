@@ -136,7 +136,9 @@ module.exports = {
         const { file } = req.files;
         const filepath = file ? path + "/" + file[0].filename : null;
 
-        let updateQuery = `UPDATE user SET picture = ${db.escape(filepath)} WHERE iduser = ${req.params.id};`;
+        let updateQuery = `UPDATE user SET picture = ${db.escape(
+          filepath
+        )} WHERE iduser = ${req.params.id};`;
 
         db.query(updateQuery, (err, results) => {
           if (err) {
