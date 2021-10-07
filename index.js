@@ -11,15 +11,20 @@ const db = require("./database");
 app.use(cors());
 app.use(express.json());
 app.use(bearerToken());
+app.use(express.static("public"));
 
-db.connect((err) => {
-  if (err) return console.log(err);
+// db.getConnection((err, connection) => {
+//   if (err) {
+//     return console.log("error mysql", err.message);
+//   }
+//   console.log(`Connected to mysql server`, connection.threadId);
+// });
 
-  console.log(`Connected with my SQL`);
+app.get("/", (req, res) => {
+  res.status(200).send("<h4>Welcome to your-api</h4>");
 });
 
-const { userRouter } = require("./routers");
-
-app.use("/user", userRouter);
+const { userRouters } = require("./routers");
+app.use("/user", userRouters);
 
 app.listen(PORT, () => console.log("Api Running :", PORT));
