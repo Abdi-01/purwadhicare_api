@@ -13,13 +13,6 @@ app.use(express.json());
 app.use(bearerToken());
 app.use(express.static("public"));
 
-// db.getConnection((err, connection) => {
-//   if (err) {
-//     return console.log("error mysql", err.message);
-//   }
-//   console.log(`Connected to mysql server`, connection.threadId);
-// });
-
 
 app.get("/", (req, res) => {
   res.status(200).send("<h4>Welcome to your-api</h4>");
