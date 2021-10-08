@@ -106,16 +106,13 @@ module.exports = {
         if (is_active != "true") {
           res.status(200).send({ message: "Your account is not verified" });
         } else {
-          res
-            .status(200)
-            .send({ dataLogin: results[0], token, message: "Login Success" });
+          res.status(200).send({ dataLogin: results[0], token, message: "Login Success" });
         }
       }
     });
   },
   getUser: (req, res) => {
-    let sql = `SELECT full_name, username, email, gender, address, age, picture FROM user WHERE iduser = ${req.params.id};`;
-    console.log(sql);
+    let sql = `SELECT iduser, full_name, username, email, gender, address, age, picture FROM user WHERE iduser = ${req.query.iduser};`;
     db.query(sql, (err, results) => {
       if (err) {
         res.status(500).send(err);
@@ -132,6 +129,14 @@ module.exports = {
         if (error) {
           console.log(error);
           res.status(500).send(error);
+        }
+
+        // Pengecekan untuk hapus file sebelumnya ketika update
+        const oldFile = "./public" + req.query.oldFile;
+        if (fs.existsSync(oldFile)) {
+          fs.unlink(oldFile, (err) => {
+            console.log(err);
+          });
         }
 
         const { file } = req.files;
