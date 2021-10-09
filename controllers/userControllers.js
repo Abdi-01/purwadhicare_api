@@ -172,6 +172,7 @@ module.exports = {
       }
       // Bahan data untuk membuat token
       let { iduser, email } = results[0];
+      console.log(iduser);
       // Membuat token
       let token = createToken({ iduser, email });
       let mail = {
@@ -211,7 +212,7 @@ module.exports = {
     });
   },
   resetPassword: (req, res) => {
-    console.log(req.body);
+    // console.log(req.body);
     const { token, password } = req.body;
     let verify = jwt.verify(token, TOKEN_KEY);
     console.log(verify);
@@ -222,6 +223,35 @@ module.exports = {
         console.log(err);
       }
       res.status(200).send({ message: "Password Has Change." });
+    });
+  },
+  changePassword: (req, res) => {
+    // console.log(req.body);
+    const { iduser, confirmPassword, newPassword, oldPassword } = req.body;
+    // console.log(iduser, password);
+    if (!(confirmPassword === newPassword)) {
+      return res.status(400).send({ msg: "Password does not match!" });
+    }
+    const checkUser = `Select password from user where iduser = '${iduser}'`;
+    db.query(checkUser, (err, results) => {
+      if (!results) {
+        return res.send({ message: "User not found" });
+      }
+
+      const hashOldPass = cryptojs.HmacMD5(oldPassword, TOKEN_KEY).toString();
+
+      if (results[0].password !== hashOldPass) {
+        return res.status(400).send({ message: "wrong old password" });
+      }
+      const hashpass = cryptojs.HmacMD5(newPassword, TOKEN_KEY).toString();
+      const updatePassword = `update user set password = '${hashpass}' where iduser = '${iduser}'`;
+
+      db.query(updatePassword, (err, results) => {
+        if (err) {
+          console.log(err);
+        }
+        res.status(200).send({ message: "Password Has Change." });
+      });
     });
   },
 };
