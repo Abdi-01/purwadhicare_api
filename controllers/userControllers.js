@@ -112,11 +112,22 @@ module.exports = {
     });
   },
   getUser: (req, res) => {
-    let sql = `SELECT iduser, full_name, username, email, gender, address, age, picture FROM user WHERE iduser = ${req.query.iduser};`;
+    let sql = `SELECT * FROM user WHERE iduser = ${req.query.iduser};`;
     db.query(sql, (err, results) => {
       if (err) {
         res.status(500).send(err);
       }
+      res.status(200).send(results);
+    });
+  },
+  editProfileData: (req, res) => {
+    let profileUpdate = [];
+    for (let prop in req.body) {
+      profileUpdate.push(`${prop}= ${db.escape(req.body[prop])}`);
+    }
+    let updateProfileQuery = `Update user set ${profileUpdate} where iduser = ${req.params.id}`;
+    db.query(updateProfileQuery, (err, results) => {
+      if (err) res.status(500).send(err);
       res.status(200).send(results);
     });
   },
