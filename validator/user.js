@@ -43,6 +43,31 @@ function checkNewPassword() {
   ];
 }
 
+function checkChangePassword() {
+  return [
+    body("newPassword")
+      .isStrongPassword({
+        minLength: 5,
+        minUppercase: 1,
+        minNumbers: 1,
+        minSymbols: 1,
+      })
+      .withMessage(
+        "New Password must contain upper case, number, symbol, and with minimum 5 length"
+      ),
+    body("confirmPassword")
+      .isStrongPassword({
+        minLength: 5,
+        minUppercase: 1,
+        minNumbers: 1,
+        minSymbols: 1,
+      })
+      .withMessage(
+        "New Password must contain upper case, number, symbol, and with minimum 5 length"
+      ),
+  ];
+}
+
 function checkForgetPassword() {
   return [
     body("email").isEmail().isLength({ min: 1 }).withMessage("Email is Empty"),
@@ -54,4 +79,5 @@ module.exports = {
   checkLogin,
   checkNewPassword,
   checkForgetPassword,
+  checkChangePassword,
 };
