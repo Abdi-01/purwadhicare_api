@@ -6,6 +6,11 @@ module.exports = {
     let scriptQuery =
       "Select idproduct, category, product_name, description, unit, price_unit, price_stock, image from product;";
 
+    //http://localhost:2200/product/get?idproduct=2
+    if(req.query.idproduct){
+      scriptQuery =
+      `Select idproduct, category, product_name, description, unit, price_unit, price_stock, image from product where idproduct = ${db.escape(req.query.idproduct)};`;
+    }
     db.query(scriptQuery, (err, results) => {
       if (err) res.status(500).send(err);
       res.status(200).send(results);
@@ -31,6 +36,8 @@ module.exports = {
     )}, ${db.escape(price_unit)}, ${db.escape(price_stock)}, ${db.escape(
       image
     )});`;
+
+
 
     console.log(insertQuery);
 
