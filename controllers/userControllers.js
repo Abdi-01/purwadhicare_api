@@ -106,7 +106,9 @@ module.exports = {
         if (is_active != "true") {
           res.status(200).send({ message: "Your account is not verified" });
         } else {
-          res.status(200).send({ dataLogin: results[0], token, message: "Login Success" });
+          res
+            .status(200)
+            .send({ dataLogin: results[0], token, message: "Login Success" });
         }
       }
     });
@@ -153,7 +155,9 @@ module.exports = {
         const { file } = req.files;
         const filepath = file ? path + "/" + file[0].filename : null;
 
-        let updateQuery = `UPDATE user SET picture = ${db.escape(filepath)} WHERE iduser = ${req.params.id};`;
+        let updateQuery = `UPDATE user SET picture = ${db.escape(
+          filepath
+        )} WHERE iduser = ${req.params.id};`;
 
         db.query(updateQuery, (err, results) => {
           if (err) {
@@ -229,6 +233,35 @@ module.exports = {
         console.log(err);
       }
       res.status(200).send({ message: "Password Has Change." });
+    });
+  },
+  changePassword: (req, res) => {
+    // console.log(req.body);
+    const { iduser, confirmPassword, newPassword, oldPassword } = req.body;
+    // console.log(iduser, password);
+    if (!(confirmPassword === newPassword)) {
+      return res.status(400).send({ msg: "Password does not match!" });
+    }
+    const checkUser = `Select password from user where iduser = '${iduser}'`;
+    db.query(checkUser, (err, results) => {
+      if (!results) {
+        return res.send({ message: "User not found" });
+      }
+
+      const hashOldPass = cryptojs.HmacMD5(oldPassword, TOKEN_KEY).toString();
+
+      if (results[0].password !== hashOldPass) {
+        return res.status(400).send({ message: "wrong old password" });
+      }
+      const hashpass = cryptojs.HmacMD5(newPassword, TOKEN_KEY).toString();
+      const updatePassword = `update user set password = '${hashpass}' where iduser = '${iduser}'`;
+
+      db.query(updatePassword, (err, results) => {
+        if (err) {
+          console.log(err);
+        }
+        res.status(200).send({ message: "Password Has Change." });
+      });
     });
   },
 };
