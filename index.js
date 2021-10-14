@@ -19,9 +19,10 @@ app.get("/", (req, res) => {
 
 
 
-const { userRouters, productRouter, profileRouter, cartRouter } = require("./routers");
+const { userRouters, productRouter, profileRouter, cartRouter, ongkirRouter } = require("./routers");
 app.use("/user", userRouters);
 app.use("/product", productRouter);
 app.use("/cart", cartRouter)
+app.use("/ongkir", cartRouter)
 
 app.listen(PORT, () => console.log("Api Running :", PORT));
