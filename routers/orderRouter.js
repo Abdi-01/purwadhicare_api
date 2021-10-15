@@ -2,6 +2,7 @@ const express = require("express");
 const { orderController } = require("../controllers");
 const routers = express.Router();
 
-routers.post("/order/recipe/:id", orderController.uploadRecipe);
-routers.get("/order", orderController.getOrder);
+routers.post("/recipe/:id", orderController.uploadRecipe);
+routers.patch("/payment/:id", orderController.uploadPayment);
+routers.get("/orderData", orderController.getOrder);
 module.exports = routers;
