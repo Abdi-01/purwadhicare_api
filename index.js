@@ -20,13 +20,17 @@ app.get("/", (req, res) => {
 const {
   userRouters,
   productRouter,
+  profileRouter,
   cartRouter,
+  transactionRouter,
   ongkirRouter,
   orderRouter,
 } = require("./routers");
+
 app.use("/user", userRouters);
 app.use("/product", productRouter);
 app.use("/cart", cartRouter);
+app.use("/transaction", transactionRouter);
 app.use("/ongkir", ongkirRouter);
 app.use("/order", orderRouter);
 
