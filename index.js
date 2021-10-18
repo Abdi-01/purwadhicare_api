@@ -17,13 +17,7 @@ app.get("/", (req, res) => {
   res.status(200).send("<h4>Welcome to your-api</h4>");
 });
 
-const {
-  userRouters,
-  productRouter,
-  cartRouter,
-  ongkirRouter,
-  orderRouter,
-} = require("./routers");
+const { userRouters, productRouter, cartRouter, ongkirRouter, orderRouter } = require("./routers");
 app.use("/user", userRouters);
 app.use("/product", productRouter);
 app.use("/cart", cartRouter);

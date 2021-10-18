@@ -106,15 +106,14 @@ module.exports = {
         if (is_active != "true") {
           res.status(200).send({ message: "Your account is not verified" });
         } else {
-          res
-            .status(200)
-            .send({ dataLogin: results[0], token, message: "Login Success" });
+          res.status(200).send({ dataLogin: results[0], token, message: "Login Success" });
         }
       }
     });
   },
   getUser: (req, res) => {
-    let sql = `SELECT * FROM user WHERE iduser = ${req.query.iduser};`;
+    if (!req.user) console.log("error user not found");
+    let sql = `SELECT * FROM user WHERE iduser = ${req.user.iduser};`;
     db.query(sql, (err, results) => {
       if (err) {
         res.status(500).send(err);
@@ -155,9 +154,7 @@ module.exports = {
         const { file } = req.files;
         const filepath = file ? path + "/" + file[0].filename : null;
 
-        let updateQuery = `UPDATE user SET picture = ${db.escape(
-          filepath
-        )} WHERE iduser = ${req.params.id};`;
+        let updateQuery = `UPDATE user SET picture = ${db.escape(filepath)} WHERE iduser = ${req.params.id};`;
 
         db.query(updateQuery, (err, results) => {
           if (err) {
