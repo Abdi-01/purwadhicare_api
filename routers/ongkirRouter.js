@@ -1,8 +1,8 @@
 const express = require("express");
-const { ongkirController } = require("../controllers");
+const { ongkirControllers } = require("../controllers");
 const routers = express.Router();
 
-routers.get("/province", ongkirController.getProvince);
-routers.get("/city/:id", ongkirController.getCity);
-routers.post("/cost", ongkirController.getOngkir);
+routers.get("/province", ongkirControllers.getProvince);
+routers.get("/city/:id", ongkirControllers.getCity);
+routers.post("/cost", ongkirControllers.getOngkir);
 module.exports = routers;

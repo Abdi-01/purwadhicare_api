@@ -29,7 +29,6 @@ module.exports = {
       if (error) throw new Error(error);
       $results = JSON.parse(body);
       res.status(200).send($results["rajaongkir"].results);
-      console.log($results["rajaongkir"].results);
     });
   },
 };

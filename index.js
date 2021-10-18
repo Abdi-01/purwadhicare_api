@@ -17,10 +17,10 @@ app.get("/", (req, res) => {
   res.status(200).send("<h4>Welcome to your-api</h4>");
 });
 
+
 const {
   userRouters,
   productRouter,
-  profileRouter,
   cartRouter,
   transactionRouter,
   ongkirRouter,

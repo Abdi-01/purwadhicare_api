@@ -7,4 +7,4 @@ routers.post("/add-cart", cartController.addCartData);
 routers.patch("/edit-cart/:idcart", cartController.editCartData);
 routers.delete("/delete-cart/:idcart", cartController.deleteCartData);
 
-module.exports = routers
+module.exports = routers;
