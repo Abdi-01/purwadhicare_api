@@ -168,7 +168,7 @@ module.exports = {
             fs.unlinkSync("./public" + filepath);
             return res.status(500).send(err);
           }
-          res.status(200).send({ message: "Upload file success" });
+          res.status(200).send({ message: "Upload file success!" });
         });
       });
     } catch (error) {
