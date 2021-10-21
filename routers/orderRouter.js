@@ -7,4 +7,6 @@ routers.post("/product", auth, orderController.addOrder);
 routers.post("/recipe/:id", orderController.uploadRecipe);
 routers.post("/payment/:id/:idorder", orderController.uploadPayment);
 routers.get("/orderData", orderController.getOrder);
+routers.get("/recipe-admin", orderController.getOrderRecipe);
+routers.get("/detail-recipe-admin/:idorder", orderController.getDetailOrderRecipe);
 module.exports = routers;

@@ -2,12 +2,12 @@ const { db } = require("../database");
 
 module.exports = {
   getCartData: (req, res) => {
-    let cartScriptQuery = `Select product_name, price_stock, image, stock, netto, total_netto, category, idcart, iduser, product.idproduct, quantity from cart inner join product on cart.idproduct = product.idproduct WHERE iduser = ${db.escape(
+    let cartScriptQuery = `Select product_name, price_stock, image, stock, netto, total_netto, unit, category, idcart, iduser, product.idproduct, quantity from cart inner join product on cart.idproduct = product.idproduct WHERE iduser = ${db.escape(
       req.query.iduser
     )};`;
 
     if (req.query.iduser && req.query.idproduct) {
-      cartScriptQuery = `Select product_name, price_stock, image, stock, netto, total_netto, category, idcart, iduser, product.idproduct, quantity from cart inner join product on cart.idproduct=product.idproduct WHERE iduser = ${db.escape(
+      cartScriptQuery = `Select product_name, price_stock, image, stock, netto, total_netto, unit, category, idcart, iduser, product.idproduct, quantity from cart inner join product on cart.idproduct=product.idproduct WHERE iduser = ${db.escape(
         req.query.iduser
       )} and cart.idproduct = ${db.escape(req.query.idproduct)};`;
       // contoh : http://localhost:2200/cart?iduser=49
