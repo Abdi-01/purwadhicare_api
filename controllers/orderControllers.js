@@ -54,6 +54,19 @@ module.exports = {
       res.status(500).send(error);
     }
   },
+  getDetailOrderRecipe: (req, res) => {
+    let getRecipeQuery = `SELECT idorder, user.full_name as user_full_name, shipping.*, province.province, city_name, type, order_status, order_date, recipe_image
+      FROM db_farmasi1.order JOIN user ON db_farmasi1.order.iduser = user.iduser
+      JOIN shipping ON db_farmasi1.order.idshipping = shipping.idshipping
+      JOIN province ON shipping.province = province.idprovince
+      JOIN city ON shipping.city = city.idcity
+      WHERE idorder = ${req.params.idorder};`;
+
+    db.query(getRecipeQuery, (err, results) => {
+      if (err) return res.status(500).send(err);
+      res.status(200).send(results);
+    });
+  },
   handleOrder: (req, res) => {
     try {
       const idCart = [req.body.cart.map((item) => [item.idcart])];
@@ -92,7 +105,7 @@ module.exports = {
             return res.status(500).send(err);
           }
           let date_now = new Date().toISOString().slice(0, 10);
-          let queryOrder = `INSERT INTO db_farmasi1.order (iduser, idshipping, order_date, recipe_image) VALUES('${iduser}', '${results.insertId}', '${date_now}', '${image}');`;
+          let queryOrder = `INSERT INTO db_farmasi1.order (iduser, idshipping, order_status, order_date, recipe_image) VALUES('${iduser}', '${results.insertId}', "Validasi Resep", '${date_now}', '${image}');`;
           db.query(queryOrder, (err2, results2) => {
             if (err2) {
               console.log(err2);
@@ -144,5 +157,14 @@ module.exports = {
       console.log(error);
       res.status(500).send(error);
     }
+  },
+  getOrderRecipe: (req, res) => {
+    let getRecipeQuery = `SELECT idorder,db_farmasi1.order.iduser, user.full_name,user.email,age, order_status, order_date
+    FROM db_farmasi1.order JOIN user ON db_farmasi1.order.iduser = user.iduser WHERE order_status = "Validasi Resep";`;
+
+    db.query(getRecipeQuery, (err, results) => {
+      if (err) return res.status(500).send(err);
+      res.status(200).send(results);
+    });
   },
 };
