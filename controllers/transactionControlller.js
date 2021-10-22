@@ -17,10 +17,10 @@ module.exports = {
 
   detailTransactionHistory: (req, res) => {
     let detailTransactionQuery =
-      "SELECT idorder,  product_name, order_detail.idproduct, price, quantity from order_detail INNER JOIN product on order_detail.idproduct = product.idproduct";
+      "SELECT idorder,  product_name, price_stock, order_detail.idproduct, price, quantity from order_detail INNER JOIN product on order_detail.idproduct = product.idproduct";
 
     if (req.query.idorder) {
-      detailTransactionQuery = ` SELECT idorder,  product_name, order_detail.idproduct, price, quantity from order_detail INNER JOIN product on order_detail.idproduct = product.idproduct where idorder = ${db.escape(
+      detailTransactionQuery = ` SELECT idorder,  product_name, price_stock, order_detail.idproduct, price, quantity from order_detail INNER JOIN product on order_detail.idproduct = product.idproduct where idorder = ${db.escape(
         req.query.idorder
       )} ;`;
     }
