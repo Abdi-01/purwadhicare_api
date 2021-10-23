@@ -3,7 +3,8 @@ const { db } = require("../database");
 module.exports = {
   getProductData: (req, res) => {
     // if(req.query.idproduct)
-    let scriptQuery = "Select idproduct, category, product_name, description, unit, price_unit, price_stock, image from product;";
+    let scriptQuery =
+      "Select idproduct, category, product_name, description, unit, price_unit, price_stock, image from product;";
 
     //http://localhost:2200/product/get?idproduct=2
     if (req.query.idproduct) {
@@ -19,13 +20,23 @@ module.exports = {
 
   addProductData: (req, res) => {
     console.log(req.body);
-    let { category, product_name, description, unit, price_unit, price_stock, image } = req.body;
+    let {
+      category,
+      product_name,
+      description,
+      unit,
+      price_unit,
+      price_stock,
+      image,
+    } = req.body;
 
     let insertQuery = `Insert into product (category, product_name, description, unit, price_unit, price_stock, image ) values (${db.escape(
       category
-    )}, ${db.escape(product_name)}, ${db.escape(description)}, ${db.escape(unit)}, ${db.escape(price_unit)}, ${db.escape(
-      price_stock
-    )}, ${db.escape(image)});`;
+    )}, ${db.escape(product_name)}, ${db.escape(description)}, ${db.escape(
+      unit
+    )}, ${db.escape(price_unit)}, ${db.escape(price_stock)}, ${db.escape(
+      image
+    )});`;
 
     console.log(insertQuery);
 
@@ -77,7 +88,9 @@ module.exports = {
   },
 
   deleteProductData: (req, res) => {
-    let deleteQuery = `Delete from product where idproduct = ${db.escape(req.params.idproduct)}`;
+    let deleteQuery = `Delete from product where idproduct = ${db.escape(
+      req.params.idproduct
+    )}`;
 
     db.query(deleteQuery, (err, results) => {
       if (err) res.status(500).send(err);

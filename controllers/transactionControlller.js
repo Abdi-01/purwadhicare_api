@@ -88,7 +88,7 @@ module.exports = {
 
   cancelQuantity: (req, res) => {
     // menhembalikan quantity yang tidak jadi dibeli ke stok
-    let cancelQtyQuery = `UPDATE db_farmasi1.product set stock = product.stock + ${req.query.cancelqty} where idproduct = ${req.query.idproduct};`;
+    let cancelQtyQuery = `UPDATE db_farmasi1.product set total_netto = product.total_netto + ${req.query.cancelqty} where idproduct = ${req.query.idproduct};`;
     console.log(cancelQtyQuery);
 
     db.query(cancelQtyQuery, (err, results) => {
