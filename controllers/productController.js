@@ -51,6 +51,14 @@ module.exports = {
     });
   },
 
+  getProductInventory: (req, res) => {
+    let getQuery = "CALL ProductInventory();";
+    db.query(getQuery, (err, results) => {
+      if (err) res.status(500).send(err);
+      res.status(200).send(results);
+    });
+  },
+
   editProductRow: (req, res) => {
     try {
       let updateQuery = "";
