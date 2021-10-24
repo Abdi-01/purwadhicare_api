@@ -54,6 +54,12 @@ module.exports = {
     });
   },
   getAllTransaction: (req, res) => {
+    // let AllTransactionsQuery = `SELECT order.idorder, user.full_name, db_farmasi1.order_detail.idproduct, db_farmasi1.order_detail.total_netto, db_farmasi1.order.order_status, db_farmasi1.order.order_date,
+    // db_farmasi1.order.total_item, db_farmasi1.order.order_price, shipping.address
+    // FROM db_farmasi1.order JOIN user ON db_farmasi1.order.iduser = user.iduser
+    // JOIN shipping ON db_farmasi1.order.idshipping= shipping.idshipping
+    // JOIN order_detail ON db_farmasi1.order.idorder = order_detail.idorder ;`;
+
     let AllTransactionsQuery = `SELECT idorder, user.full_name, db_farmasi1.order.order_status, db_farmasi1.order.order_date, 
     db_farmasi1.order.total_item, db_farmasi1.order.order_price, shipping.address
     FROM db_farmasi1.order JOIN user ON db_farmasi1.order.iduser = user.iduser 
@@ -87,12 +93,32 @@ module.exports = {
   },
 
   cancelQuantity: (req, res) => {
-    // menhembalikan quantity yang tidak jadi dibeli ke stok
-    let cancelQtyQuery = `UPDATE db_farmasi1.product set total_netto = product.total_netto + ${req.query.cancelqty} where idproduct = ${req.query.idproduct};`;
-    console.log(cancelQtyQuery);
+    let updateQuery = "";
+    req.body.detailTrans.forEach((val) => {
+      let netto = val.prev_netto + val.total_netto;
 
-    db.query(cancelQtyQuery, (err, results) => {
+      updateQuery += `UPDATE product SET total_netto = ${netto}  WHERE idproduct = ${val.idproduct}; `;
+    });
+    console.log(req.body.detailTrans);
+    console.log(updateQuery);
+
+    db.query(updateQuery, (err, results) => {
       if (err) res.status(500).send(err);
+      res.status(200).send(results);
+    });
+  },
+
+  getDetailTransaction: (req, res) => {
+    let DetailTransaction = `Select p.total_netto as prev_netto , p.idproduct, u.full_name, od.idorder, od.total_netto, od.price, od.quantity, s.idshipping, s.address, order_price, order_status, order_date, total_item, payment_image , product_name 
+    FROM db_farmasi1.order_detail as od 
+    JOIN db_farmasi1.order  o ON od.idorder = o.idorder 
+    JOIN product p ON od.idproduct = p.idproduct 
+    JOIN shipping as s on s.idshipping = o.idshipping 
+    JOIN user as u on u.iduser = o.iduser
+    where od.idorder = ${req.params.id};`;
+
+    db.query(DetailTransaction, (err, results) => {
+      if (err) return res.status(500).send(err);
       res.status(200).send(results);
     });
   },

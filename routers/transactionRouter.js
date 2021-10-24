@@ -10,5 +10,9 @@ routers.get("/selected-revenue", transactionController.selectedRevenue)
 routers.patch("/confirm-transaction/:idorder", transactionController.confirmTransaction)
 routers.patch("/reject-transaction/:idorder", transactionController.rejectTransaction)
 routers.patch("/cancel-quantity", transactionController.cancelQuantity)
+routers.get(
+    "/detail-transaction/:id",
+    transactionController.getDetailTransaction
+  );
 
 module.exports = routers
