@@ -52,12 +52,6 @@ module.exports = {
     });
   },
   getAllTransaction: (req, res) => {
-    // let AllTransactionsQuery = `SELECT order.idorder, user.full_name, db_farmasi1.order_detail.idproduct, db_farmasi1.order_detail.total_netto, db_farmasi1.order.order_status, db_farmasi1.order.order_date,
-    // db_farmasi1.order.total_item, db_farmasi1.order.order_price, shipping.address
-    // FROM db_farmasi1.order JOIN user ON db_farmasi1.order.iduser = user.iduser
-    // JOIN shipping ON db_farmasi1.order.idshipping= shipping.idshipping
-    // JOIN order_detail ON db_farmasi1.order.idorder = order_detail.idorder ;`;
-
     let AllTransactionsQuery = `SELECT idorder, user.full_name, db_farmasi1.order.order_status, db_farmasi1.order.order_date, 
     db_farmasi1.order.total_item, db_farmasi1.order.order_price, shipping.address
     FROM db_farmasi1.order JOIN user ON db_farmasi1.order.iduser = user.iduser 
@@ -69,20 +63,13 @@ module.exports = {
     });
   },
   getDetailTransaction: (req, res) => {
-<<<<<<< HEAD
     let DetailTransaction = `Select u.full_name, od.idorder, p.product_name, p.price_unit, p.price_stock, od.quantity, s.idshipping, s.address, order_price, order_status, order_date, total_item, payment_image , recipe_image 
-=======
-    let DetailTransaction = `Select u.full_name, od.idorder, od.price, od.quantity, s.idshipping, s.address, order_price, order_status, order_date, total_item, payment_image , product_name 
->>>>>>> fea74effce0c3dcf9535cfbd1476e5954bcca847
     FROM db_farmasi1.order_detail as od 
     JOIN db_farmasi1.order  o ON od.idorder = o.idorder 
     JOIN product p ON od.idproduct = p.idproduct 
     JOIN shipping as s on s.idshipping = o.idshipping 
     JOIN user as u on u.iduser = o.iduser
-<<<<<<< HEAD
     where od.idorder =  ${req.params.id};`;
-=======
-    where od.idorder = ${req.params.id};`;
 
     db.query(DetailTransaction, (err, results) => {
       if (err) return res.status(500).send(err);
@@ -122,22 +109,6 @@ module.exports = {
 
     db.query(updateQuery, (err, results) => {
       if (err) res.status(500).send(err);
-      res.status(200).send(results);
-    });
-  },
-
-  getDetailTransaction: (req, res) => {
-    let DetailTransaction = `Select p.total_netto as prev_netto , p.idproduct, u.full_name, od.idorder, od.total_netto, od.price, od.quantity, s.idshipping, s.address, order_price, order_status, order_date, total_item, payment_image , product_name 
-    FROM db_farmasi1.order_detail as od 
-    JOIN db_farmasi1.order  o ON od.idorder = o.idorder 
-    JOIN product p ON od.idproduct = p.idproduct 
-    JOIN shipping as s on s.idshipping = o.idshipping 
-    JOIN user as u on u.iduser = o.iduser
-    where od.idorder = ${req.params.id};`;
->>>>>>> fea74effce0c3dcf9535cfbd1476e5954bcca847
-
-    db.query(DetailTransaction, (err, results) => {
-      if (err) return res.status(500).send(err);
       res.status(200).send(results);
     });
   },
