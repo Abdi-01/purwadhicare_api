@@ -1,5 +1,7 @@
 const { db } = require("../database");
 const request = require("request");
+const dotenv = require("dotenv");
+dotenv.config();
 
 module.exports = {
   getProvince: (req, res) => {
@@ -22,7 +24,7 @@ module.exports = {
     const options = {
       method: "POST",
       url: "https://api.rajaongkir.com/starter/cost",
-      headers: { key: "321f2bc127732001eed0301569e241c9", "content-type": "application/x-www-form-urlencoded" },
+      headers: { key: process.env.RAJAONGKIR_KEY, "content-type": "application/x-www-form-urlencoded" },
       form: { origin: "22", destination, weight: Math.ceil(weight), courier: "jne" },
     };
 
