@@ -26,13 +26,23 @@ module.exports = {
   },
   addProductData: (req, res) => {
     console.log(req.body);
-    let { category, product_name, description, unit, price_unit, price_stock, image } = req.body;
+    let {
+      category,
+      product_name,
+      description,
+      unit,
+      price_unit,
+      price_stock,
+      image,
+    } = req.body;
 
     let insertQuery = `Insert into product (category, product_name, description, unit, price_unit, price_stock, image ) values (${db.escape(
       category
-    )}, ${db.escape(product_name)}, ${db.escape(description)}, ${db.escape(unit)}, ${db.escape(price_unit)}, ${db.escape(
-      price_stock
-    )}, ${db.escape(image)});`;
+    )}, ${db.escape(product_name)}, ${db.escape(description)}, ${db.escape(
+      unit
+    )}, ${db.escape(price_unit)}, ${db.escape(price_stock)}, ${db.escape(
+      image
+    )});`;
 
     console.log(insertQuery);
 
@@ -58,6 +68,14 @@ module.exports = {
     });
   },
 
+  getProductInventory: (req, res) => {
+    let getQuery = "CALL ProductInventory();";
+    db.query(getQuery, (err, results) => {
+      if (err) res.status(500).send(err);
+      res.status(200).send(results);
+    });
+  },
+
   editProductRow: (req, res) => {
     try {
       let updateQuery = "";
@@ -76,7 +94,9 @@ module.exports = {
   },
 
   deleteProductData: (req, res) => {
-    let deleteQuery = `Delete from product where idproduct = ${db.escape(req.params.idproduct)}`;
+    let deleteQuery = `Delete from product where idproduct = ${db.escape(
+      req.params.idproduct
+    )}`;
 
     db.query(deleteQuery, (err, results) => {
       if (err) res.status(500).send(err);

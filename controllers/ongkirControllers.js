@@ -26,6 +26,7 @@ module.exports = {
       url: "https://api.rajaongkir.com/starter/cost",
       headers: { key: process.env.RAJAONGKIR_KEY, "content-type": "application/x-www-form-urlencoded" },
       form: { origin: "22", destination, weight: Math.ceil(weight), courier: "jne" },
+
     };
 
     request(options, function (error, response, body) {
