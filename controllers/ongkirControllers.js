@@ -22,8 +22,16 @@ module.exports = {
     const options = {
       method: "POST",
       url: "https://api.rajaongkir.com/starter/cost",
-      headers: { key: "321f2bc127732001eed0301569e241c9", "content-type": "application/x-www-form-urlencoded" },
-      form: { origin: "22", destination, weight: Math.ceil(weight), courier: "jne" },
+      headers: {
+        key: "ba486845f939be1fc43e7bbcc5b39ed4",
+        "content-type": "application/x-www-form-urlencoded",
+      },
+      form: {
+        origin: "22",
+        destination,
+        weight: Math.ceil(weight),
+        courier: "jne",
+      },
     };
 
     request(options, function (error, response, body) {
