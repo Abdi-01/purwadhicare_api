@@ -224,7 +224,6 @@ module.exports = {
     });
   },
   resetPassword: (req, res) => {
-    // console.log(req.body);
     const { token, password } = req.body;
     let verify = jwt.verify(token, TOKEN_KEY);
     console.log(verify);
