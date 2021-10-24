@@ -21,16 +21,7 @@ module.exports = {
   },
   addOrder: (req, res) => {
     try {
-      const {
-        full_name,
-        phone_number,
-        address,
-        districts,
-        postal_code,
-        notes,
-        province,
-        city,
-      } = req.body.formShipping;
+      const { full_name, phone_number, address, districts, postal_code, notes, province, city } = req.body.formShipping;
       let queryShipping = `INSERT INTO shipping (iduser, full_name, phone_number, address, province, city, districts, postal_code, notes)
        VALUES(${req.user.iduser}, '${full_name}', '${phone_number}', '${address}', '${province}','${city}', '${districts}', '${postal_code}', '${notes}');`;
       db.query(queryShipping, (err, results) => {
@@ -46,8 +37,7 @@ module.exports = {
             console.log(err2);
             return res.status(500).send(err2);
           }
-          const detailSql =
-            "INSERT INTO order_detail (idorder, idproduct, total_netto, price, quantity) VALUES ? ";
+          const detailSql = "INSERT INTO order_detail (idorder, idproduct, total_netto, price, quantity) VALUES ? ";
           const detail = [
             req.body.cart.map((item) => [
               results2.insertId,
@@ -108,18 +98,7 @@ module.exports = {
         let data = JSON.parse(req.body.data);
         data.image = filepath;
         data.iduser = req.params.id;
-        let {
-          full_name,
-          phone_number,
-          address,
-          districts,
-          postal_code,
-          notes,
-          province,
-          city,
-          image,
-          iduser,
-        } = data;
+        let { full_name, phone_number, address, districts, postal_code, notes, province, city, image, iduser } = data;
         console.log(data);
 
         let queryShipping = `INSERT INTO shipping (iduser, full_name, phone_number, address, province, city, districts, postal_code, notes)
@@ -171,9 +150,7 @@ module.exports = {
 
         let updateQuery = `UPDATE db_farmasi1.order SET order_status = "Menunggu Pengiriman", payment_image = ${db.escape(
           filepath
-        )} WHERE iduser = ${req.params.id} AND idorder = ${
-          req.params.idorder
-        };`;
+        )} WHERE iduser = ${req.params.id} AND idorder = ${req.params.idorder};`;
 
         db.query(updateQuery, (err, results) => {
           if (err) {
@@ -196,6 +173,48 @@ module.exports = {
     db.query(getRecipeQuery, (err, results) => {
       if (err) return res.status(500).send(err);
       res.status(200).send(results);
+    });
+  },
+  getOrderRecipeSuccess: (req, res) => {
+    let getRecipeQuery = `CALL RecipeOrderLIst();`;
+
+    db.query(getRecipeQuery, (err, results) => {
+      if (err) return res.status(500).send(err);
+      res.status(200).send(results);
+    });
+  },
+  getSalesReport: (req, res) => {
+    let getRecipeQuery = `CALL OrderList();`;
+
+    db.query(getRecipeQuery, (err, results) => {
+      if (err) return res.status(500).send(err);
+      res.status(200).send(results);
+    });
+  },
+  addOrderRecipe: (req, res) => {
+    const { idorder, order_price } = req.body.order;
+
+    const orderSql = `UPDATE db_farmasi1.order SET order_price = ${order_price} , order_status = "Menunggu Pembayaran" WHERE idorder = ${idorder}; `;
+    console.log(orderSql);
+    db.query(orderSql, (err, result) => {
+      if (err) {
+        console.log(err);
+        return res.status(500).send(err);
+      }
+      const detailSql = "INSERT INTO order_detail (idorder, idproduct, total_netto, price, quantity) VALUES ? ";
+      const detail = [req.body.detail_order.map((item) => [item.idorder, item.idproduct, item.total_netto, item.price, 0])];
+      db.query(detailSql, detail, (err2, result) => {
+        if (err2) return res.status(500).send(err2);
+        let updateQuery = "";
+        req.body.detail_order.forEach((val) => {
+          let netto = val.prev_total_netto - val.total_netto;
+          updateQuery += `UPDATE product SET total_netto = ${netto} WHERE idproduct = ${val.idproduct}; `;
+        });
+        db.query(updateQuery, (err, results) => {
+          if (err) res.status(500).send(err);
+          res.status(200).send({ message: "Add Order Success" });
+        });
+      });
     });
   },
 };
