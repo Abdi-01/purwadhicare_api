@@ -41,4 +41,18 @@ module.exports = {
       res.status(200).send(results);
     });
   },
+  getDetailTransaction: (req, res) => {
+    let DetailTransaction = `Select u.full_name, od.idorder, od.price, od.quantity, s.idshipping, s.address, order_price, order_status, order_date, total_item, payment_image , product_name 
+    FROM db_farmasi1.order_detail as od 
+    JOIN db_farmasi1.order  o ON od.idorder = o.idorder 
+    JOIN product p ON od.idproduct = p.idproduct 
+    JOIN shipping as s on s.idshipping = o.idshipping 
+    JOIN user as u on u.iduser = o.iduser
+    where od.idorder = ${req.params.id};`;
+
+    db.query(DetailTransaction, (err, results) => {
+      if (err) return res.status(500).send(err);
+      res.status(200).send(results);
+    });
+  },
 };
