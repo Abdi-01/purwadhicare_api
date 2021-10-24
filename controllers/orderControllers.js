@@ -1,13 +1,19 @@
 const { db } = require("../database");
 const { uploader } = require("../helpers/uploader");
 const fs = require("fs");
+const jwt = require("jsonwebtoken");
+const { createToken } = require("../helpers/createToken");
+const cryptojs = require("crypto-js");
+const transporter = require("../helpers/nodemailer");
+const TOKEN_KEY = process.env.TOKEN_KEY;
 
 module.exports = {
   getOrder: (req, res) => {
-    let sql = `SELECT * FROM db_farmasi1.order WHERE iduser = ${req.query.iduser};`;
+    let verify = jwt.verify(req.headers.token, TOKEN_KEY);
+    let id = parseInt(verify.iduser);
+    let sql = `SELECT * FROM db_farmasi1.order WHERE iduser = ${id};`;
     db.query(sql, (err, results) => {
       if (err) {
-        console.log(results);
         res.status(500).send(err);
       }
       res.status(200).send(results);
@@ -15,7 +21,16 @@ module.exports = {
   },
   addOrder: (req, res) => {
     try {
-      const { full_name, phone_number, address, districts, postal_code, notes, province, city } = req.body.formShipping;
+      const {
+        full_name,
+        phone_number,
+        address,
+        districts,
+        postal_code,
+        notes,
+        province,
+        city,
+      } = req.body.formShipping;
       let queryShipping = `INSERT INTO shipping (iduser, full_name, phone_number, address, province, city, districts, postal_code, notes)
        VALUES(${req.user.iduser}, '${full_name}', '${phone_number}', '${address}', '${province}','${city}', '${districts}', '${postal_code}', '${notes}');`;
       db.query(queryShipping, (err, results) => {
@@ -31,7 +46,8 @@ module.exports = {
             console.log(err2);
             return res.status(500).send(err2);
           }
-          const detailSql = "INSERT INTO order_detail (idorder, idproduct, total_netto, price, quantity) VALUES ? ";
+          const detailSql =
+            "INSERT INTO order_detail (idorder, idproduct, total_netto, price, quantity) VALUES ? ";
           const detail = [
             req.body.cart.map((item) => [
               results2.insertId,
@@ -53,6 +69,19 @@ module.exports = {
     } catch (error) {
       res.status(500).send(error);
     }
+  },
+  getDetailOrderRecipe: (req, res) => {
+    let getRecipeQuery = `SELECT idorder, user.full_name as user_full_name, shipping.*, province.province, city_name, type, order_status, order_date, recipe_image
+      FROM db_farmasi1.order JOIN user ON db_farmasi1.order.iduser = user.iduser
+      JOIN shipping ON db_farmasi1.order.idshipping = shipping.idshipping
+      JOIN province ON shipping.province = province.idprovince
+      JOIN city ON shipping.city = city.idcity
+      WHERE idorder = ${req.params.idorder};`;
+
+    db.query(getRecipeQuery, (err, results) => {
+      if (err) return res.status(500).send(err);
+      res.status(200).send(results);
+    });
   },
   handleOrder: (req, res) => {
     try {
@@ -79,7 +108,18 @@ module.exports = {
         let data = JSON.parse(req.body.data);
         data.image = filepath;
         data.iduser = req.params.id;
-        let { full_name, phone_number, address, districts, postal_code, notes, province, city, image, iduser } = data;
+        let {
+          full_name,
+          phone_number,
+          address,
+          districts,
+          postal_code,
+          notes,
+          province,
+          city,
+          image,
+          iduser,
+        } = data;
         console.log(data);
 
         let queryShipping = `INSERT INTO shipping (iduser, full_name, phone_number, address, province, city, districts, postal_code, notes)
@@ -92,7 +132,7 @@ module.exports = {
             return res.status(500).send(err);
           }
           let date_now = new Date().toISOString().slice(0, 10);
-          let queryOrder = `INSERT INTO db_farmasi1.order (iduser, idshipping, order_date, recipe_image) VALUES('${iduser}', '${results.insertId}', '${date_now}', '${image}');`;
+          let queryOrder = `INSERT INTO db_farmasi1.order (iduser, idshipping, order_status, order_date, recipe_image) VALUES('${iduser}', '${results.insertId}', "Validasi Resep", '${date_now}', '${image}');`;
           db.query(queryOrder, (err2, results2) => {
             if (err2) {
               console.log(err2);
@@ -129,7 +169,11 @@ module.exports = {
         const { file } = req.files;
         const filepath = file ? path + "/" + file[0].filename : null;
 
-        let updateQuery = `UPDATE db_farmasi1.order SET payment_image = ${db.escape(filepath)} WHERE iduser = ${req.params.id};`;
+        let updateQuery = `UPDATE db_farmasi1.order SET order_status = "Menunggu Pengiriman", payment_image = ${db.escape(
+          filepath
+        )} WHERE iduser = ${req.params.id} AND idorder = ${
+          req.params.idorder
+        };`;
 
         db.query(updateQuery, (err, results) => {
           if (err) {
@@ -137,12 +181,21 @@ module.exports = {
             fs.unlinkSync("./public" + filepath);
             return res.status(500).send(err);
           }
-          res.status(200).send({ message: "Upload file success" });
+          res.status(200).send({ message: "Upload file success!" });
         });
       });
     } catch (error) {
       console.log(error);
       res.status(500).send(error);
     }
+  },
+  getOrderRecipe: (req, res) => {
+    let getRecipeQuery = `SELECT idorder,db_farmasi1.order.iduser, user.full_name,user.email,age, order_status, order_date
+    FROM db_farmasi1.order JOIN user ON db_farmasi1.order.iduser = user.iduser WHERE order_status = "Validasi Resep";`;
+
+    db.query(getRecipeQuery, (err, results) => {
+      if (err) return res.status(500).send(err);
+      res.status(200).send(results);
+    });
   },
 };

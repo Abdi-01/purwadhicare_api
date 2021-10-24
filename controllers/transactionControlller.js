@@ -30,7 +30,6 @@ module.exports = {
       res.status(200).send(result);
     });
   },
-
   allRevenue: (req, res) => {
     let scriptTotalRevenue = `Select SUM(order_price) as allrevenue from db_farmasi1.order WHERE order_status = 'Order Selesai';`;
     db.query(scriptTotalRevenue, (err, results) => {
@@ -38,7 +37,6 @@ module.exports = {
       res.status(200).send(results);
     });
   },
-
   selectedRevenue: (req, res) => {
     // format '2021-11-15'
     // http://localhost:2200/transaction/selected-revenue?fromDate=2020-9-01&lastDate=2020-11-31
@@ -70,7 +68,20 @@ module.exports = {
       res.status(200).send(results);
     });
   },
+  getDetailTransaction: (req, res) => {
+    let DetailTransaction = `Select u.full_name, od.idorder, od.price, od.quantity, s.idshipping, s.address, order_price, order_status, order_date, total_item, payment_image , product_name 
+    FROM db_farmasi1.order_detail as od 
+    JOIN db_farmasi1.order  o ON od.idorder = o.idorder 
+    JOIN product p ON od.idproduct = p.idproduct 
+    JOIN shipping as s on s.idshipping = o.idshipping 
+    JOIN user as u on u.iduser = o.iduser
+    where od.idorder = ${req.params.id};`;
 
+    db.query(DetailTransaction, (err, results) => {
+      if (err) return res.status(500).send(err);
+      res.status(200).send(results);
+    });
+  },
   confirmTransaction: (req, res) => {
     let confirmQuery = `UPDATE db_farmasi1.order set order_status = 'Order Selesai' where idorder = ${req.params.idorder};`;
     console.log(confirmQuery);

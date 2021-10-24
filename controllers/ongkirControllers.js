@@ -17,18 +17,28 @@ module.exports = {
     });
   },
   getOngkir: (req, res) => {
-    const { destination } = req.body.params;
+    const { destination, weight } = req.body;
+    console.log(destination, weight);
     const options = {
       method: "POST",
       url: "https://api.rajaongkir.com/starter/cost",
-      headers: { key: "321f2bc127732001eed0301569e241c9", "content-type": "application/x-www-form-urlencoded" },
-      form: { origin: "22", destination: destination, weight: 1000, courier: "jne" },
+      headers: {
+        key: "ba486845f939be1fc43e7bbcc5b39ed4",
+        "content-type": "application/x-www-form-urlencoded",
+      },
+      form: {
+        origin: "22",
+        destination,
+        weight: Math.ceil(weight),
+        courier: "jne",
+      },
     };
 
     request(options, function (error, response, body) {
       if (error) throw new Error(error);
       $results = JSON.parse(body);
       res.status(200).send($results["rajaongkir"].results);
+      console.log($results["rajaongkir"].results);
     });
   },
 };
