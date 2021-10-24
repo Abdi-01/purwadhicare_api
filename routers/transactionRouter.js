@@ -11,8 +11,9 @@ routers.patch("/confirm-transaction/:idorder", transactionController.confirmTran
 routers.patch("/reject-transaction/:idorder", transactionController.rejectTransaction)
 routers.patch("/cancel-quantity", transactionController.cancelQuantity)
 routers.get(
-  "/detail-transaction/:id",
-  transactionController.getDetailTransaction
-);
+    "/detail-transaction/:id",
+    transactionController.getDetailTransaction
+  );
 module.exports = routers
+
 
