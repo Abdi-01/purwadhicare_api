@@ -54,12 +54,6 @@ module.exports = {
     });
   },
   getAllTransaction: (req, res) => {
-    // let AllTransactionsQuery = `SELECT order.idorder, user.full_name, db_farmasi1.order_detail.idproduct, db_farmasi1.order_detail.total_netto, db_farmasi1.order.order_status, db_farmasi1.order.order_date,
-    // db_farmasi1.order.total_item, db_farmasi1.order.order_price, shipping.address
-    // FROM db_farmasi1.order JOIN user ON db_farmasi1.order.iduser = user.iduser
-    // JOIN shipping ON db_farmasi1.order.idshipping= shipping.idshipping
-    // JOIN order_detail ON db_farmasi1.order.idorder = order_detail.idorder ;`;
-
     let AllTransactionsQuery = `SELECT idorder, user.full_name, db_farmasi1.order.order_status, db_farmasi1.order.order_date, 
     db_farmasi1.order.total_item, db_farmasi1.order.order_price, shipping.address
     FROM db_farmasi1.order JOIN user ON db_farmasi1.order.iduser = user.iduser 
