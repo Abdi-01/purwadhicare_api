@@ -63,7 +63,7 @@ module.exports = {
     });
   },
   getDetailTransaction: (req, res) => {
-    let DetailTransaction = `Select u.full_name, od.idorder, p.product_name, p.price_unit, p.price_stock, od.quantity, s.idshipping, s.address, order_price, order_status, order_date, total_item, payment_image , recipe_image 
+    let DetailTransaction = `Select u.full_name, od.idorder, p.price_unit, p.price_stock, p.product_name, p.unit, od.total_netto, od.quantity, s.idshipping, s.address, order_price, order_status, order_date, total_item, payment_image , recipe_image 
     FROM db_farmasi1.order_detail as od 
     JOIN db_farmasi1.order  o ON od.idorder = o.idorder 
     JOIN product p ON od.idproduct = p.idproduct 
