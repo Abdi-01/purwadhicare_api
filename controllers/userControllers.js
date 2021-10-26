@@ -75,7 +75,7 @@ module.exports = {
   },
   // Controller untuk Proses Verifikasi
   verification: (req, res) => {
-    console.log(req.user);
+    // console.log(req.user);
     let updateQuery = `Update user set is_active='true' where iduser = ${req.user.iduser};`;
 
     db.query(updateQuery, (err, results) => {
@@ -114,11 +114,23 @@ module.exports = {
     });
   },
   getUser: (req, res) => {
-    let sql = `SELECT iduser, full_name, username, email, gender, address, age, picture FROM user WHERE iduser = ${req.query.iduser};`;
+    if (!req.user) console.log("error user not found");
+    let sql = `SELECT * FROM user WHERE iduser = ${req.user.iduser};`;
     db.query(sql, (err, results) => {
       if (err) {
         res.status(500).send(err);
       }
+      res.status(200).send(results);
+    });
+  },
+  editProfileData: (req, res) => {
+    let profileUpdate = [];
+    for (let prop in req.body) {
+      profileUpdate.push(`${prop}= ${db.escape(req.body[prop])}`);
+    }
+    let updateProfileQuery = `Update user set ${profileUpdate} where iduser = ${req.params.id}`;
+    db.query(updateProfileQuery, (err, results) => {
+      if (err) res.status(500).send(err);
       res.status(200).send(results);
     });
   },
@@ -212,7 +224,6 @@ module.exports = {
     });
   },
   resetPassword: (req, res) => {
-    // console.log(req.body);
     const { token, password } = req.body;
     let verify = jwt.verify(token, TOKEN_KEY);
     console.log(verify);

@@ -67,7 +67,6 @@ function checkChangePassword() {
       ),
   ];
 }
-
 function checkForgetPassword() {
   return [
     body("email").isEmail().isLength({ min: 1 }).withMessage("Email is Empty"),
